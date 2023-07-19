@@ -1,0 +1,33 @@
+:host ::ng-deep .custom-spinner .p-progress-spinner-circle {
+    animation: custom-progress-spinner-dash 5.5s ease-in-out infinite,
+    custom-progress-spinner-color 6s ease-in-out infinite;    
+}
+.custom-spinner {
+    position: fixed;
+    left: 0px;
+    height: 100%;
+    top: 0;
+    z-index: 10000;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    width: 100%;
+}
+
+@keyframes custom-progress-spinner-color {
+    100%,
+    0% {
+        stroke: #157a8f;
+    }
+}
+
+::ng-deep .p-progress-spinner {
+    right: 0;
+    bottom: 0;
+    top: 48%;
+}
+
+@media (max-width:767px){
+    ::ng-deep .p-progress-spinner {
+        left: 0;       
+    }
+}

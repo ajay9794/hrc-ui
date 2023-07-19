@@ -1,0 +1,102 @@
+<app-progress-spinner [isProgressSpinnerActive]=isProgressSpinnerActive></app-progress-spinner>
+<div class="card pb-4">
+    <p-toast></p-toast>
+    <div class="text-center" style="background: #a4d9ea; padding: 1px;">
+        <h2>Upload (xls or xlsx) File</h2>
+    </div>
+    <div class="flex justify-content-center">
+        <form class="w-80">
+            <p-fileUpload [files]="files" [multiple]="false" accept=".xls,.xlsx" [customUpload]="true"
+                (onSelect)="onSelectFile($event)" (onClear)="onClearFile($event)" (uploadHandler)="onUpload($event)"
+                [disabled]="fileUploadDisabled">
+                <ng-template pTemplate="toolbar">
+                    <div class="justify-content-center pt-2">
+                        <div class="filter-radio-btn flex-wrap gap-3">
+                            <div class="align-items-center">
+                                <p-radioButton (onClick)="setSelectedFilter('gst')" name="excelfilter" value="gst"
+                                    [(ngModel)]="selectedFilter" inputId="ingredient1"></p-radioButton>
+                                <label for="ingredient1" class="ml-2">GST</label>
+                            </div>
+
+                            <div class="align-items-center">
+                                <p-radioButton (onClick)="setSelectedFilter('itemName')" name="excelfilter"
+                                    value="itemName" [(ngModel)]="selectedFilter" inputId="ingredient2"></p-radioButton>
+                                <label for="ingredient2" class="ml-2">Item Name</label>
+                            </div>
+                        </div>
+                        <div class="item-selector-drop-down pt-2">
+                            <p-dropdown [disabled]="this.selectedFilter !=='itemName'" class="pl-2"
+                            [options]="dropDownItemList" (onChange)="onClickDropDown($event)"
+                            optionLabel="name"></p-dropdown>
+                        </div>
+                    </div>
+
+
+                </ng-template>
+                <ng-template let-file pTemplate="file">
+                    <div class="flex justify-content-center pt-2">
+                        <table class="w-100 text-center">
+                            <caption></caption>
+                            <tr class="w-100">
+                                <th class="w-20"></th>
+                                <th class="w-60" class="tablePadding">File Name</th>
+                                <th class="w-20">File Size</th>
+                            </tr>
+                            <tr class="w-100">
+                                <td class="w-20"><img class="img-w" alt="xlsFile" src="./assets/ExcelFile.png" /></td>
+                                <td class="w-60" class="tablePadding">{{ file.name }}</td>
+                                <td class="w-20">{{ file.size }} bytes</td>
+                            </tr>
+                            <tr class="w-100">
+                                <td class="w-20"></td>
+                                <td class="w-60"><p-button *ngIf="this.selectedFilter === 'gst' && this.filterXlsRecords?.length" (click)="exportAllGSTexcel()"
+                                    label="Export All To Excel"></p-button>
+                                </td>
+                                <td class="w-20"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </ng-template>
+            </p-fileUpload>
+        </form>
+    </div>
+
+</div>
+<div>
+    <div class="pb-4" *ngFor="let filterRecord of filterXlsRecords">
+        <div style="width: 100%; overflow: auto; background: #f1f1f1;">
+            <div class="pt-2 pb-2 text-center"><p-button (click)="exportexcel(filterRecord.excelFilter)"
+                    label="Export to Excel"></p-button></div>
+            <div class="pb-4">
+                <div class="text-left"
+                    style="margin: auto; height: 200px; width: 80%; overflow: auto; border: 1px solid;">
+                    <table class="w-100" id={{filterRecord.excelFilter}}>
+                        <caption>{{filterRecord.excelFilter}}</caption>
+                        <tr class="w-100">
+                            <th class="w-40">Item Name</th>
+                            <th class="w-15">Quantity</th>
+                            <th class="w-15"> BEFORE GST</th>
+                            <th class="w-15" *ngIf="selectedFilter !=='itemName'">GST</th>
+                            <th class="w-15">Amount</th>
+                        </tr>
+                        <tr class="w-100" *ngFor="let item of filterRecord.list">
+                            <td class="w-40">{{item.itemName}}</td>
+                            <td class="w-15">{{item.qty}}</td>
+                            <td class="w-15">{{item.beforeGst}}</td>
+                            <td class="w-15" *ngIf="selectedFilter !=='itemName'">{{item.gst}}</td>
+                            <td class="w-15">{{item.amount}}</td>
+                        </tr>
+                        <tr class="w-100">
+                            <td class="w-40">Total =</td>
+                            <td class="w-15">{{calculateTotalQuantity(filterRecord.list)}} PCS</td>
+                            <td class="w-15">{{calculateTotalBeforGstAmount(filterRecord.list)}}</td>
+                            <td class="w-15" *ngIf="selectedFilter !=='itemName'"></td>
+                            <td class="w-15">{{calculateTotalAmount(filterRecord.list)}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
